@@ -8,9 +8,15 @@ extends Camera2D
 @export var start_zoom_scale: float = 1
 @export var scroll_units: float = 0.1
 
+@export var arrow_image: Sprite2D
+@export var orbit_predictor: Node2D
+
+
 func _ready() -> void:
 	if start_zoom_scale:
 		zoom = Vector2(start_zoom_scale, start_zoom_scale)
+	orbit_predictor.width = orbit_predictor.default_line_lenght
+
 
 func _process(delta: float) -> void:
 	if player:
@@ -20,11 +26,19 @@ func _process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.is_pressed():
 		var new_zoom = zoom
-		
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			new_zoom = zoom * (1.0 + scroll_units)
+			
+				
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			new_zoom = zoom * (1.0 - scroll_units)
 		
 		zoom.x = clamp(new_zoom.x, min_zoom_scale, max_zoom_scale)
 		zoom.y = clamp(new_zoom.y, min_zoom_scale, max_zoom_scale)
+		
+		orbit_predictor.width = orbit_predictor.default_line_lenght * 1/ (4.9 *zoom.x)
+		if new_zoom.x < 0.07	:
+			arrow_image.visible = true
+			arrow_image.scale = Vector2(1/(1.9*zoom.x),1/(1.9*zoom.y))
+		else:
+			arrow_image.visible = false
