@@ -33,11 +33,12 @@ func _process(_delta: float) -> void:
 	var start_pos = player.global_position
 	var point_pos = start_pos
 	var velocity = player.linear_velocity
-	
+	var vector_planet_to_player = (start_pos - planet.global_position).normalized()
 	var planet_mass: float = planet.get("mass")
-	
+	var orbit_complete: bool = false
 	var player_mass: float = player.mass
-
+	var has_passed_other_side: bool = false
+	
 	for i in range(step_count):
 		add_point(point_pos)
 		
@@ -51,8 +52,11 @@ func _process(_delta: float) -> void:
 			var surface_pos = planet.global_position - (direction_normalized * planet_radius)
 			add_point(surface_pos)
 			break
+		else:
+			if (-direction_normalized).dot(vector_planet_to_player) < -0.9:
+				orbit_complete = true
 			
-		if i > 50 and point_pos.distance_to(start_pos) < 60.0:
+		if i > 50 and point_pos.distance_to(start_pos) < 60.0 and orbit_complete:
 			#em orbita
 			var line_gradient = Gradient.new()
 			line_gradient.set_color(0, complete_orbit_color)
