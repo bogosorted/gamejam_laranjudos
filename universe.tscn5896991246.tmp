@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://2ve3tpn7st2k"]
+
+[ext_resource type="Script" uid="uid://c2qky82j5xoy6" path="res://scripts/gravity_resolver.gd" id="1_tcg2k"]
+[ext_resource type="Script" uid="uid://dpfiyomnbouoo" path="res://scripts/camera_behaviour.gd" id="2_e2blk"]
+[ext_resource type="Texture2D" uid="uid://l12w62qctj2d" path="res://images/circle-512.png" id="2_onkyh"]
+[ext_resource type="Texture2D" uid="uid://cxcrdrtqh34lk" path="res://images/icon.svg" id="3_d0y5q"]
+[ext_resource type="Script" uid="uid://db40tkr22xitd" path="res://scripts/planet_behaviour.gd" id="4_e2blk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qn2io"]
+size = Vector2(128, 128)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qn2io"]
+radius = 3565.0
+
+[node name="Universe" type="Node2D" unique_id=134936649]
+
+[node name="GAME_MANAGER" type="Node" parent="." unique_id=281771506 node_paths=PackedStringArray("player")]
+script = ExtResource("1_tcg2k")
+player = NodePath("../Player")
+G = null
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1497961582 node_paths=PackedStringArray("player")]
+script = ExtResource("2_e2blk")
+player = NodePath("../Player")
+min_zoom_scale = 0.01
+scroll_units = 0.5
+
+[node name="Player" type="RigidBody2D" parent="." unique_id=666031919]
+position = Vector2(558, 129)
+mass = 30.0
+
+[node name="Sprite2D" type="Sprite2D" parent="Player" unique_id=2072702007]
+texture = ExtResource("3_d0y5q")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=1027238733]
+shape = SubResource("RectangleShape2D_qn2io")
+
+[node name="Planet1" type="StaticBody2D" parent="." unique_id=634331359]
+position = Vector2(565, 3794)
+script = ExtResource("4_e2blk")
+
+[node name="Sprite2D" type="Sprite2D" parent="Planet1" unique_id=615868081]
+texture_filter = 5
+scale = Vector2(14, 14)
+texture = ExtResource("2_onkyh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Planet1" unique_id=260992998]
+position = Vector2(1, 0)
+shape = SubResource("CircleShape2D_qn2io")
