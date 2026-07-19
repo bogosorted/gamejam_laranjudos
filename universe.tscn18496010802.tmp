@@ -117,7 +117,6 @@ texture = ExtResource("7_u640v")
 [node name="Planet1" type="AnimatableBody2D" parent="." unique_id=1043781028 node_paths=PackedStringArray("collision_shape", "satellite_of")]
 position = Vector2(700, 7356)
 physics_material_override = SubResource("PhysicsMaterial_d0y5q")
-sync_to_physics = false
 script = ExtResource("4_e2blk")
 mass = 500000.0
 radius = 7130.0
@@ -128,6 +127,7 @@ collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Sun")
 default_soi_line_width = 8.0
 rotation_speed = 0.4
+orbit_speed = 0.08
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Planet1" unique_id=260992998]
 position = Vector2(1, 0)
@@ -136,7 +136,6 @@ shape = SubResource("CircleShape2D_qn2io")
 [node name="Planet2" type="AnimatableBody2D" parent="." unique_id=480367705 node_paths=PackedStringArray("collision_shape", "satellite_of")]
 position = Vector2(27866, -5758)
 physics_material_override = SubResource("PhysicsMaterial_ncg7h")
-sync_to_physics = false
 script = ExtResource("4_e2blk")
 mass = 30000.0
 radius = 5000.0
@@ -147,6 +146,7 @@ collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Planet1")
 default_soi_line_width = 8.0
 rotation_speed = -0.5
+orbit_speed = 0.04
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Planet2" unique_id=1338584083]
 position = Vector2(1, 0)
@@ -155,7 +155,6 @@ shape = SubResource("CircleShape2D_u640v")
 [node name="Sun" type="AnimatableBody2D" parent="." unique_id=1898023005 node_paths=PackedStringArray("collision_shape")]
 position = Vector2(114583, -68041)
 physics_material_override = SubResource("PhysicsMaterial_sraih")
-sync_to_physics = false
 script = ExtResource("4_e2blk")
 mass = 10000000.0
 radius = 20000.0

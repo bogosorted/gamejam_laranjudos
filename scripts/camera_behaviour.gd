@@ -11,11 +11,14 @@ extends Camera2D
 @export var arrow_image: Sprite2D
 @export var orbit_predictor: Node2D
 
-
 func _ready() -> void:
 	if start_zoom_scale:
 		zoom = Vector2(start_zoom_scale, start_zoom_scale)
 	orbit_predictor.width = orbit_predictor.default_line_lenght
+	
+	for planet in get_tree().get_nodes_in_group("planets"):
+		planet.soi_line_width = planet.default_soi_line_width * 1 / (4.9 * zoom.x)
+		planet.queue_redraw()
 
 
 func _process(delta: float) -> void:
@@ -37,6 +40,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		zoom.y = clamp(new_zoom.y, min_zoom_scale, max_zoom_scale)
 		
 		orbit_predictor.width = orbit_predictor.default_line_lenght * 1/ (4.9 *zoom.x)
+		
+		for planet in get_tree().get_nodes_in_group("planets"):
+			planet.soi_line_width = planet.default_soi_line_width * 1 / (4.9 * zoom.x)
+			planet.queue_redraw()
+			
 		if new_zoom.x < 0.07	:
 			arrow_image.visible = true
 			arrow_image.scale = Vector2(1/(1.9*zoom.x),1/(1.9*zoom.y))

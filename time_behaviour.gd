@@ -2,11 +2,12 @@ extends Node
 
 @export var transition_speed: float = 2.0
 
-@export var default_time_scale = 0.1
+@export var default_time_scale = 1.0
 var target_time_scale: float
 
 func _ready() -> void:
 	Engine.time_scale = default_time_scale
+	target_time_scale = default_time_scale
 
 func _process(delta: float) -> void:
 	if Input.is_key_pressed(KEY_1) || Input.is_action_pressed("move_up"):
