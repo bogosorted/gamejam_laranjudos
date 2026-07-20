@@ -24,7 +24,7 @@ func _ready() -> void:
 	soi_visualizer.set_script(preload("res://scripts/soi_visualizer.gd"))
 	soi_visualizer.parent_planet = self
 	soi_visualizer.use_parent_material = false
-	soi_visualizer.z_index = -1
+	soi_visualizer.z_index = -2
 	add_child(soi_visualizer)
 	
 	if collision_shape and collision_shape.shape is CircleShape2D:
@@ -51,7 +51,6 @@ func _draw() -> void:
 		
 		var direction = Vector2(cos(angle), sin(angle))
 		
-		# para deixar o centro do circulo como 0.5 no uv map
 		var uv = (direction + Vector2.ONE) / 2.0
 
 		points.append(direction * radius)
@@ -63,6 +62,5 @@ func _draw() -> void:
 		soi_visualizer.queue_redraw()
 		
 func _calculate_sphere_influence(satellite_mass, planet_mass, distance) -> float:
-		# r = D * (m/M) ^ 2/5
 		return distance * pow(satellite_mass/planet_mass, 0.4) 
 	

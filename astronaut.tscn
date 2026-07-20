@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://c7q7e2ueo5ulf"]
+
+[ext_resource type="Texture2D" uid="uid://rl6n5psbe1gp" path="res://images/Sprite_rato_tileset.png" id="1_gtphq"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l76db"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_roq07"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pw13x"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6cnut"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d5k3e"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m3ec0"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(64, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_13l12"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(128, 64, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8mvvu"]
+atlas = ExtResource("1_gtphq")
+region = Rect2(192, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wy5j1"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l76db")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_roq07")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pw13x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6cnut")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 0.7,
+"texture": SubResource("AtlasTexture_d5k3e")
+}, {
+"duration": 0.7,
+"texture": SubResource("AtlasTexture_m3ec0")
+}, {
+"duration": 0.7,
+"texture": SubResource("AtlasTexture_13l12")
+}, {
+"duration": 0.7,
+"texture": SubResource("AtlasTexture_8mvvu")
+}],
+"loop": 1,
+"name": &"walking",
+"speed": 5.0
+}]
+
+[node name="Astronaut" type="Node2D" unique_id=1155113419]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=513240170]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_wy5j1")
+animation = &"walking"
+frame_progress = 0.6379224
+speed_scale = 16.0

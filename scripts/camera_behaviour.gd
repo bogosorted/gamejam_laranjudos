@@ -5,11 +5,12 @@ extends Camera2D
 #configurações do zoom (scroll)
 @export var max_zoom_scale: float = 3
 @export var min_zoom_scale: float = 0.001
-@export var start_zoom_scale: float = 1
+@export var start_zoom_scale: float = 2.5
 @export var scroll_units: float = 0.1
 
 @export var arrow_image: Sprite2D
 @export var orbit_predictor: Node2D
+@export var sky_material: ColorRect
 
 func _ready() -> void:
 	if start_zoom_scale:
@@ -24,6 +25,13 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if player:
 		global_position = player.global_position
+		
+		if player.name == "Astronaut":
+			global_rotation = lerp_angle(global_rotation, player.global_rotation, delta * 5.0)
+		else:
+			global_rotation = lerp_angle(global_rotation, 0.0, delta * 5.0)
+		
+	sky_material.material.set_shader_parameter("cam_pos", global_position)
 		
 #metodo que calcula o zoom in e zoom out
 func _unhandled_input(event: InputEvent) -> void:

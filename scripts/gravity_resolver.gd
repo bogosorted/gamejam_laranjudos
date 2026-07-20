@@ -5,14 +5,14 @@ extends Node
 
 var planets: Array[Node2D] = []
 
-
+var planet_with_gravity_influence: Node2D
 
 func _physics_process(delta: float) -> void:
 	if planets.is_empty():
 		planets.assign(get_tree().get_nodes_in_group("planets"))
 		planets.sort_custom(func(a, b): return a.soi_radius < b.soi_radius)
 
-	var planet_with_gravity_influence = null
+	planet_with_gravity_influence = null
 	
 	for planet in planets:
 		var planet_distance = player.global_position.distance_to(planet.global_position)
