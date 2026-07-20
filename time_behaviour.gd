@@ -15,8 +15,8 @@ func _process(delta: float) -> void:
 	elif Input.is_key_pressed(KEY_2):
 		target_time_scale = default_time_scale * 3
 	elif Input.is_key_pressed(KEY_3):
-		target_time_scale =  default_time_scale * 16
+		target_time_scale =  default_time_scale * 8
 	elif Input.is_key_pressed(KEY_4):
-		target_time_scale = default_time_scale * 32
+		target_time_scale = default_time_scale * 16
 
 	Engine.time_scale = move_toward(Engine.time_scale, target_time_scale, transition_speed * delta)

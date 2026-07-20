@@ -45,8 +45,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			planet.soi_line_width = planet.default_soi_line_width * 1 / (4.9 * zoom.x)
 			planet.queue_redraw()
 			
-		if new_zoom.x < 0.07	:
+		if new_zoom.x < 0.008	:
 			arrow_image.visible = true
-			arrow_image.scale = Vector2(1/(1.9*zoom.x),1/(1.9*zoom.y))
+			arrow_image.scale = Vector2(1/(3*zoom.x),1/(3*zoom.y))
 		else:
 			arrow_image.visible = false

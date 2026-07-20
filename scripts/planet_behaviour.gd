@@ -14,10 +14,18 @@ extends StaticBody2D
 @export var rotation_speed: float = 0.5
 var soi_line_width: float = 15.0
 var soi_radius: float
+var soi_visualizer: Node2D
 
 func _ready() -> void:
 	add_to_group("planets")
 	soi_line_width = default_soi_line_width
+	
+	soi_visualizer = Node2D.new()
+	soi_visualizer.set_script(preload("res://scripts/soi_visualizer.gd"))
+	soi_visualizer.parent_planet = self
+	soi_visualizer.use_parent_material = false
+	soi_visualizer.z_index = -1
+	add_child(soi_visualizer)
 	
 	if collision_shape and collision_shape.shape is CircleShape2D:
 		collision_shape.shape.radius = radius
@@ -51,18 +59,8 @@ func _draw() -> void:
 			
 	draw_polygon(points, PackedColorArray([color]), uvs)
 	
-	if soi_radius != INF:
-		var dash_count = 40
-		var angle_step = TAU / dash_count
-		
-		var soi_color = orbit_color_start
-		soi_color.a = 0.5
-		
-		for i in range(dash_count):
-			var start_angle = i * angle_step
-			var end_angle = start_angle + (angle_step * 0.5) 
-			draw_arc(Vector2.ZERO, soi_radius, start_angle, end_angle, 4, soi_color, soi_line_width)
-		
+	if soi_visualizer:
+		soi_visualizer.queue_redraw()
 		
 func _calculate_sphere_influence(satellite_mass, planet_mass, distance) -> float:
 		# r = D * (m/M) ^ 2/5

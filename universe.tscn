@@ -3,31 +3,182 @@
 [ext_resource type="Script" uid="uid://76ht0b62g5j5" path="res://time_behaviour.gd" id="1_d0y5q"]
 [ext_resource type="Script" uid="uid://c2qky82j5xoy6" path="res://scripts/gravity_resolver.gd" id="1_tcg2k"]
 [ext_resource type="Script" uid="uid://dpfiyomnbouoo" path="res://scripts/camera_behaviour.gd" id="2_e2blk"]
-[ext_resource type="Texture2D" uid="uid://cxcrdrtqh34lk" path="res://images/icon.svg" id="3_d0y5q"]
 [ext_resource type="Script" uid="uid://ddu2crwxb7a2r" path="res://orbit_predictor.gd" id="3_ncg7h"]
 [ext_resource type="Script" uid="uid://d536r8sy4hh0" path="res://scripts/rocket_behaviour.gd" id="3_wp8oq"]
 [ext_resource type="Script" uid="uid://db40tkr22xitd" path="res://scripts/planet_behaviour.gd" id="4_e2blk"]
-[ext_resource type="Texture2D" uid="uid://cmyy0o0h3f4x8" path="res://images/arrow_v4.png" id="7_u640v"]
+[ext_resource type="Texture2D" uid="uid://w68gninr223t" path="res://images/Sprite_robo_tileset.png" id="6_ncg7h"]
+[ext_resource type="Texture2D" uid="uid://sa2q67mso4g7" path="res://images/New Piskel (32).png" id="6_u640v"]
+[ext_resource type="Shader" uid="uid://d11u6nlyrl261" path="res://scripts/fire_engine.gdshader" id="8_u640v"]
+[ext_resource type="Shader" uid="uid://cfxcxl524qwpx" path="res://scripts/planet_shader.gdshader" id="9_sraih"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u640v"]
-friction = 0.12
+friction = 2.65
+absorbent = true
+
+[sub_resource type="Curve" id="Curve_u640v"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.033707857), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_ncg7h"]
+curve = SubResource("Curve_u640v")
+
+[sub_resource type="Gradient" id="Gradient_ncg7h"]
+offsets = PackedFloat32Array(0, 0.27868852, 0.8278689)
+colors = PackedColorArray(1, 1, 1, 1, 1, 0.54901963, 0, 1, 0.7213756, 0.052899823, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_u640v"]
+gradient = SubResource("Gradient_ncg7h")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u640v"]
+particle_flag_disable_z = true
+emission_shape_scale = Vector3(20, 1, 1)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angle_min = 1.0728835e-05
+angle_max = 1.0728835e-05
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 200.0
+initial_velocity_max = 1100.0
+angular_velocity_min = -154.84001
+angular_velocity_max = -15.490016
+orbit_velocity_min = 9.49949e-08
+orbit_velocity_max = 9.49949e-08
+radial_velocity_min = -1000.0
+radial_velocity_max = -838.71
+gravity = Vector3(0, 0, 0)
+linear_accel_min = -2.2351742e-06
+linear_accel_max = -2.2351742e-06
+radial_accel_min = -100.0
+radial_accel_max = -100.0
+tangential_accel_min = -2.2351742e-06
+tangential_accel_max = -2.2351742e-06
+scale_min = 0.0
+scale_max = 36.13
+color = Color(1, 0.94, 0.955, 1)
+color_ramp = SubResource("GradientTexture1D_u640v")
+alpha_curve = SubResource("CurveTexture_ncg7h")
+hue_variation_min = -2.2351742e-08
+hue_variation_max = 0.059999976
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_wp8oq"]
 custom_solver_bias = 0.49
 radius = 27.0
 height = 72.0
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_u640v"]
+custom_solver_bias = 0.49
+radius = 8.0
+height = 16.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ncg7h"]
+custom_solver_bias = 0.49
+radius = 18.0
+height = 44.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u640v"]
+shader = ExtResource("8_u640v")
+shader_parameter/intensity = 0.0
+shader_parameter/color = Color(1, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sraih"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_sraih"]
+width = 1200
+height = 1200
+noise = SubResource("FastNoiseLite_sraih")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sraih"]
+shader = ExtResource("9_sraih")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_sraih")
+shader_parameter/resolution = 2048.0
+shader_parameter/slices = 3.0
+shader_parameter/light_color = Color(0, 0.69, 0.36799997, 1)
+shader_parameter/dark_color = Color(0, 0.99, 0.528, 1)
+
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_d0y5q"]
+friction = 1.45
+absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qn2io"]
 radius = 3565.0
 
+[sub_resource type="Shader" id="Shader_sraih"]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise_tex;
+uniform float resolution = 32.0;
+uniform float slices = 5.0;
+uniform vec4 light_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 dark_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+
+void fragment() {
+    vec2 pixelated_uv = floor(UV * resolution) / resolution;
+    float noise = texture(noise_tex, pixelated_uv).r;
+    float line_effect = floor(noise * slices) / slices;
+    
+    vec4 final_color = mix(light_color, dark_color, line_effect);
+    final_color.a *= COLOR.a; 
+    
+    COLOR = final_color;
+}"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_r5888"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_h0rt2"]
+noise = SubResource("FastNoiseLite_r5888")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2cpxq"]
+shader = SubResource("Shader_sraih")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_h0rt2")
+shader_parameter/resolution = 2048.0
+shader_parameter/slices = 1.5
+shader_parameter/light_color = Color(0.62152386, 0.6215239, 0.6215237, 1)
+shader_parameter/dark_color = Color(0.44291076, 0.44291073, 0.44291085, 1)
+
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ncg7h"]
+friction = 2.05
+absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_u640v"]
 radius = 3565.0
 
+[sub_resource type="Shader" id="Shader_asrgw"]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise_tex;
+uniform float resolution = 32.0;
+uniform float slices = 5.0;
+uniform vec4 light_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 dark_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+
+void fragment() {
+    vec2 pixelated_uv = floor(UV * resolution) / resolution;
+    float noise = texture(noise_tex, pixelated_uv).r;
+    float line_effect = floor(noise * slices) / slices;
+    
+    vec4 final_color = mix(light_color, dark_color, line_effect);
+    final_color.a *= COLOR.a; 
+    
+    COLOR = final_color;
+}"
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_3ukee"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r5888"]
+noise = SubResource("FastNoiseLite_3ukee")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_h0rt2"]
+shader = SubResource("Shader_asrgw")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_r5888")
+shader_parameter/resolution = 2048.0
+shader_parameter/slices = 3.0
+shader_parameter/light_color = Color(1, 0.9666667, 0, 1)
+shader_parameter/dark_color = Color(1, 0.32633328, 0.060000002, 1)
+
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_sraih"]
+friction = 0.4
+absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ncg7h"]
 radius = 3565.0
@@ -66,11 +217,12 @@ scroll_units = 0.5
 arrow_image = NodePath("../Player/UIArrow")
 orbit_predictor = NodePath("../GAME_MANAGER/ORBIT_PREDICTOR")
 
-[node name="Player" type="RigidBody2D" parent="." unique_id=666031919]
+[node name="Player" type="RigidBody2D" parent="." unique_id=666031919 node_paths=PackedStringArray("particle_2D", "sprite_2D_engine")]
 position = Vector2(564, 163)
 mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_u640v")
 gravity_scale = 0.0
+center_of_mass_mode = 1
 can_sleep = false
 linear_damp_mode = 1
 angular_damp_mode = 1
@@ -79,42 +231,128 @@ thrust_force = 8500000.0
 rotation_speed = 300000.0
 engine_offset_y = -50.0
 sas_strength = 4000.0
+particle_2D = NodePath("GPUParticles2D")
+sprite_2D_engine = NodePath("RocketSprite3")
+
+[node name="GPUParticles2D" type="GPUParticles2D" parent="Player" unique_id=355587933]
+position = Vector2(0, 164)
+amount = 6000
+lifetime = 2.0
+speed_scale = 46.57
+randomness = 1.0
+fixed_fps = 60
+interpolate = false
+fract_delta = false
+collision_base_size = 0.0
+visibility_rect = Rect2(-100.075, -100, 200, 200)
+process_material = SubResource("ParticleProcessMaterial_u640v")
+
+[node name="UIArrow" type="Sprite2D" parent="Player" unique_id=1584622892]
+visible = false
+z_index = 1
+scale = Vector2(4, 4)
+texture = ExtResource("6_u640v")
 
 [node name="RocketSprite" type="Sprite2D" parent="Player" unique_id=2072702007]
-texture = ExtResource("3_d0y5q")
+texture_filter = 1
+scale = Vector2(2, 2)
+texture = ExtResource("6_ncg7h")
+region_enabled = true
+region_rect = Rect2(347, 66, 64, 64)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=1027238733]
-position = Vector2(-27, 37)
+position = Vector2(-12, 37)
 rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_wp8oq")
 one_way_collision_margin = 0.0
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="Player" unique_id=501770850]
-position = Vector2(28, -37)
+position = Vector2(8, -37)
 rotation = -1.5707964
 shape = SubResource("CapsuleShape2D_wp8oq")
 one_way_collision_margin = 0.0
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="Player" unique_id=1565037093]
-position = Vector2(-28, -37)
+position = Vector2(-10, -37)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_wp8oq")
 one_way_collision_margin = 0.0
 
 [node name="CollisionShape2D4" type="CollisionShape2D" parent="Player" unique_id=2096140673]
-position = Vector2(28, 37)
+position = Vector2(11, 37)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_wp8oq")
 one_way_collision_margin = 0.0
 
-[node name="UIArrow" type="Sprite2D" parent="Player" unique_id=1584622892]
-visible = false
-z_index = 1
-texture_filter = 3
-scale = Vector2(4, 4)
-texture = ExtResource("7_u640v")
+[node name="up" type="Node2D" parent="Player" unique_id=183956087]
+
+[node name="middle" type="Node2D" parent="Player" unique_id=571022505]
+
+[node name="bottom" type="Node2D" parent="Player" unique_id=435773252]
+
+[node name="RocketSprite2" type="Sprite2D" parent="Player" unique_id=1525028655]
+texture_filter = 1
+position = Vector2(1, -130)
+scale = Vector2(2, 2)
+texture = ExtResource("6_ncg7h")
+region_enabled = true
+region_rect = Rect2(347, 0, 65, 66)
+
+[node name="CollisionShape2D5" type="CollisionShape2D" parent="Player" unique_id=400519666]
+position = Vector2(0, -91)
+rotation = -1.5707964
+shape = SubResource("CapsuleShape2D_wp8oq")
+one_way_collision_margin = 0.0
+
+[node name="CollisionShape2D6" type="CollisionShape2D" parent="Player" unique_id=598580207]
+position = Vector2(0, -165)
+rotation = -1.5707964
+shape = SubResource("CapsuleShape2D_u640v")
+one_way_collision_margin = 0.0
+
+[node name="CollisionShape2D7" type="CollisionShape2D" parent="Player" unique_id=1190594810]
+position = Vector2(0, -136)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_ncg7h")
+one_way_collision_margin = 0.0
+
+[node name="RocketSprite3" type="Sprite2D" parent="Player" unique_id=993778352]
+texture_filter = 1
+material = SubResource("ShaderMaterial_u640v")
+position = Vector2(0, 128)
+scale = Vector2(2, 2)
+texture = ExtResource("6_ncg7h")
+region_enabled = true
+region_rect = Rect2(347, 130, 65, 64)
+
+[node name="CollisionShape2D9" type="CollisionShape2D" parent="Player" unique_id=658925871]
+position = Vector2(-33, 165)
+rotation = -1.5707964
+shape = SubResource("CapsuleShape2D_wp8oq")
+one_way_collision_margin = 0.0
+
+[node name="CollisionShape2D10" type="CollisionShape2D" parent="Player" unique_id=1558583227]
+position = Vector2(2, 91)
+rotation = -1.5707964
+scale = Vector2(1, 1.0054616)
+shape = SubResource("CapsuleShape2D_wp8oq")
+one_way_collision_margin = 0.0
+
+[node name="CollisionShape2D11" type="CollisionShape2D" parent="Player" unique_id=73982174]
+position = Vector2(-4, 91)
+rotation = 1.5707964
+scale = Vector2(1, 1.0054616)
+shape = SubResource("CapsuleShape2D_wp8oq")
+one_way_collision_margin = 0.0
+
+[node name="CollisionShape2D12" type="CollisionShape2D" parent="Player" unique_id=1113323382]
+position = Vector2(30, 165)
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_wp8oq")
+one_way_collision_margin = 0.0
 
 [node name="Planet1" type="AnimatableBody2D" parent="." unique_id=1043781028 node_paths=PackedStringArray("collision_shape", "satellite_of")]
+material = SubResource("ShaderMaterial_sraih")
 position = Vector2(700, 7356)
 physics_material_override = SubResource("PhysicsMaterial_d0y5q")
 sync_to_physics = false
@@ -127,13 +365,14 @@ orbit_color_end = Color(6.7383053e-06, 0.683956, 0.55568755, 0)
 collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Sun")
 default_soi_line_width = 8.0
-rotation_speed = 0.4
+rotation_speed = 0.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Planet1" unique_id=260992998]
 position = Vector2(1, 0)
 shape = SubResource("CircleShape2D_qn2io")
 
 [node name="Planet2" type="AnimatableBody2D" parent="." unique_id=480367705 node_paths=PackedStringArray("collision_shape", "satellite_of")]
+material = SubResource("ShaderMaterial_2cpxq")
 position = Vector2(27866, -5758)
 physics_material_override = SubResource("PhysicsMaterial_ncg7h")
 sync_to_physics = false
@@ -146,13 +385,14 @@ orbit_color_end = Color(0.9141812, 0.9159259, 0, 0)
 collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Planet1")
 default_soi_line_width = 8.0
-rotation_speed = -0.5
+rotation_speed = 0.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Planet2" unique_id=1338584083]
 position = Vector2(1, 0)
 shape = SubResource("CircleShape2D_u640v")
 
 [node name="Sun" type="AnimatableBody2D" parent="." unique_id=1898023005 node_paths=PackedStringArray("collision_shape")]
+material = SubResource("ShaderMaterial_h0rt2")
 position = Vector2(114583, -68041)
 physics_material_override = SubResource("PhysicsMaterial_sraih")
 sync_to_physics = false
