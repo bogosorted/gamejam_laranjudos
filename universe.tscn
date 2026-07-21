@@ -14,6 +14,12 @@
 [ext_resource type="Shader" uid="uid://drwqlsxs2c6pa" path="res://scripts/shaders/sky.gdshader" id="11_asrgw"]
 [ext_resource type="Shader" uid="uid://uvnq216v1l52" path="res://scripts/shaders/atmosphere.gdshader" id="11_h0rt2"]
 [ext_resource type="FontFile" uid="uid://s3jgkf3dhvno" path="res://fonts/Silkscreen-Bold.ttf" id="14_r5888"]
+[ext_resource type="PackedScene" uid="uid://3vc0iyrvfo6j" path="res://robot.tscn" id="15_3ukee"]
+[ext_resource type="Texture2D" uid="uid://rl6n5psbe1gp" path="res://images/Sprite_rato_tileset.png" id="15_dmmwq"]
+[ext_resource type="Script" uid="uid://01n300fvag1k" path="res://scripts/npc_interaction.gd" id="16_7yncb"]
+[ext_resource type="Texture2D" uid="uid://co3d18c0lai0x" path="res://images/robot_head.png" id="17_dmmwq"]
+[ext_resource type="PackedScene" uid="uid://dr1c05vo260yl" path="res://dialog.tscn" id="17_wi8h0"]
+[ext_resource type="Script" uid="uid://3ueeepb0sn7e" path="res://scripts/dialog_node.gd" id="19_dex8p"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u640v"]
 friction = 2.65
@@ -106,7 +112,7 @@ friction = 1.45
 absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_qn2io"]
-radius = 3565.0
+radius = 7130.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_r5888"]
 shader = ExtResource("11_h0rt2")
@@ -136,7 +142,129 @@ friction = 2.05
 absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_u640v"]
-radius = 3565.0
+radius = 5000.0
+
+[sub_resource type="Shader" id="Shader_r5888"]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise_tex;
+uniform float resolution = 32.0;
+uniform float slices = 5.0;
+uniform vec4 light_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 dark_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float noise_intensity : hint_range(0.0, 1.0) = 0.15;
+
+// Função hash robusta para gerar estática pura (sem sin)
+float random(vec2 uv) {
+    vec3 p3  = fract(vec3(uv.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+void fragment() {
+    vec2 pixelated_uv = floor(UV * resolution) / resolution;
+    float noise = texture(noise_tex, pixelated_uv).r;
+    float line_effect = floor(noise * slices) / slices;
+    vec4 final_color = mix(light_color, dark_color, line_effect);
+
+    float static_noise = random(FRAGCOORD.xy);
+    float color_variation = (static_noise - 0.5) * noise_intensity;
+    final_color.rgb += color_variation;
+
+    final_color.a *= COLOR.a;
+    COLOR = final_color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5q646"]
+shader = SubResource("Shader_r5888")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_h0rt2")
+shader_parameter/resolution = 2048.0
+shader_parameter/slices = 1.5
+shader_parameter/light_color = Color(1, 0.65, 0, 1)
+shader_parameter/dark_color = Color(0.7557633, 0.24727559, 0, 1)
+shader_parameter/noise_intensity = 0.158000007505
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7yncb"]
+radius = 14000.0
+
+[sub_resource type="Shader" id="Shader_5q646"]
+code = "shader_type canvas_item;
+
+uniform vec4 inner_color : source_color = vec4(0.6, 0.9, 1.0, 0.8);
+uniform vec4 middle_color : source_color = vec4(0.2, 0.6, 1.0, 0.4);
+uniform vec4 outer_color : source_color = vec4(0.0, 0.2, 0.8, 0.0);
+
+uniform float inner_radius : hint_range(0.0, 0.5) = 0.2;
+uniform float middle_radius : hint_range(0.0, 0.5) = 0.35;
+uniform float outer_radius : hint_range(0.0, 0.5) = 0.5;
+
+void fragment() {
+    float dist = distance(UV, vec2(0.5));
+    
+    float t1 = smoothstep(inner_radius, middle_radius, dist);
+    float t2 = smoothstep(middle_radius, outer_radius, dist);
+    
+    vec4 color_mix = mix(inner_color, middle_color, t1);
+    vec4 final_color = mix(color_mix, outer_color, t2);
+    
+    COLOR = final_color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wi8h0"]
+shader = SubResource("Shader_5q646")
+shader_parameter/inner_color = Color(1, 0.718, 0.060000002, 0.8)
+shader_parameter/middle_color = Color(1, 0.51666665, 0, 0.72156864)
+shader_parameter/outer_color = Color(0.9999998, 0.51211375, 0.1447703, 0)
+shader_parameter/inner_radius = 0.11200000532
+shader_parameter/middle_radius = 0.27600001311
+shader_parameter/outer_radius = 0.4750000225625
+
+[sub_resource type="Shader" id="Shader_3ukee"]
+code = "shader_type canvas_item;
+
+uniform sampler2D noise_tex;
+uniform float resolution = 32.0;
+uniform float slices = 5.0;
+uniform vec4 light_color : source_color = vec4(1.0, 1.0, 1.0, 1.0);
+uniform vec4 dark_color : source_color = vec4(0.0, 0.0, 0.0, 1.0);
+uniform float noise_intensity : hint_range(0.0, 1.0) = 0.15;
+
+// Função hash robusta para gerar estática pura (sem sin)
+float random(vec2 uv) {
+    vec3 p3  = fract(vec3(uv.xyx) * 0.1031);
+    p3 += dot(p3, p3.yzx + 33.33);
+    return fract((p3.x + p3.y) * p3.z);
+}
+
+void fragment() {
+    vec2 pixelated_uv = floor(UV * resolution) / resolution;
+    float noise = texture(noise_tex, pixelated_uv).r;
+    float line_effect = floor(noise * slices) / slices;
+    vec4 final_color = mix(light_color, dark_color, line_effect);
+
+    float static_noise = random(FRAGCOORD.xy);
+    float color_variation = (static_noise - 0.5) * noise_intensity;
+    final_color.rgb += color_variation;
+
+    final_color.a *= COLOR.a;
+    COLOR = final_color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7yncb"]
+shader = SubResource("Shader_3ukee")
+shader_parameter/noise_tex = SubResource("NoiseTexture2D_h0rt2")
+shader_parameter/resolution = 2048.0
+shader_parameter/slices = 1.5
+shader_parameter/light_color = Color(1, 0.8833333, 0, 1)
+shader_parameter/dark_color = Color(0.54, 0.45090005, 0.005399995, 1)
+shader_parameter/noise_intensity = 0.158000007505
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_wi8h0"]
+friction = 2.05
+absorbent = true
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_dmmwq"]
+radius = 4000.0
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_3ukee"]
 
@@ -157,7 +285,7 @@ friction = 0.4
 absorbent = true
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_ncg7h"]
-radius = 3565.0
+radius = 20000.0
 
 [sub_resource type="Shader" id="Shader_h0rt2"]
 code = "shader_type canvas_item;
@@ -586,6 +714,59 @@ font_size = 34
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_dmmwq"]
+atlas = ExtResource("15_dmmwq")
+region = Rect2(0, 130, 64, 64)
+
+[sub_resource type="LabelSettings" id="LabelSettings_qn2io"]
+font = ExtResource("14_r5888")
+font_size = 45
+font_color = Color(0.98, 0.85260004, 0.21560003, 1)
+outline_size = 5
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_dex8p"]
+font = ExtResource("14_r5888")
+font_size = 20
+outline_size = 4
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Resource" id="Resource_ppy6p"]
+script = ExtResource("19_dex8p")
+lines = Array[String]([": Dentro da Nave o W serve para acelerar. ", "Lembre-se você pode apertar R para reiniciar!"])
+option_1 = "Vou em busca do meu objetivo!"
+action_give_mission_type = "altitude"
+action_give_mission_target = "Vahz"
+action_give_mission_value = 700.0
+is_one_time_mission = true
+reward_variable = "cheeses"
+reward_amount = 1
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_dex8p"]
+script = ExtResource("19_dex8p")
+lines = Array[String]([" Muito bem! Ao chegar lá, pressione E para interagir", "e iniciar sua primeira missão: subir 700 metros."])
+option_1 = "Certo!"
+next_node_1 = SubResource("Resource_ppy6p")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_hjv2q"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Ótimo! Para começar sua primeira missão", " vá até a sua nave, que está à esquerda. Use A e D para se movimentar."])
+option_1 = "Ok"
+next_node_1 = SubResource("Resource_dex8p")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_dmmwq"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Robô Laranjudo: Olá! Eu\\n  sou o Laranjudo. ", "Posso te ajudar na sua missão?"])
+option_1 = "Sim"
+next_node_1 = SubResource("Resource_hjv2q")
+option_2 = "Não"
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qn2io"]
+size = Vector2(74, 77)
+
 [node name="Universe" type="Node2D" unique_id=134936649]
 
 [node name="GAME_MANAGER" type="Node" parent="." unique_id=281771506]
@@ -621,9 +802,9 @@ arrow_image = NodePath("../Player/UIArrow")
 orbit_predictor = NodePath("../GAME_MANAGER/ORBIT_PREDICTOR")
 sky_material = NodePath("../stars/ColorRect")
 
-[node name="Player" type="RigidBody2D" parent="." unique_id=666031919 node_paths=PackedStringArray("particle_2D", "sprite_2D_engine", "gravity_resolver", "label_enter")]
-position = Vector2(-107711, 128664)
-rotation = -0.48566028
+[node name="Player" type="RigidBody2D" parent="." unique_id=666031919 node_paths=PackedStringArray("particle_2D", "sprite_2D_engine", "gravity_resolver", "label_enter", "label_planet_name", "label_velocity", "label_altitude", "label_gasoline", "label_cheeses", "label_mission")]
+position = Vector2(-107284, 128109.01)
+rotation = -0.25347102
 mass = 100.0
 physics_material_override = SubResource("PhysicsMaterial_u640v")
 gravity_scale = 0.0
@@ -640,6 +821,12 @@ particle_2D = NodePath("GPUParticles2D")
 sprite_2D_engine = NodePath("RocketSprite3")
 gravity_resolver = NodePath("../GAME_MANAGER/GRAVITY_BEHAVIOUR")
 label_enter = NodePath("../CanvasLayer/left text")
+label_planet_name = NodePath("../CanvasLayer/planet_name")
+label_velocity = NodePath("../CanvasLayer/velocity")
+label_altitude = NodePath("../CanvasLayer/height")
+label_gasoline = NodePath("../CanvasLayer/fuel")
+label_cheeses = NodePath("../CanvasLayer/cheese")
+label_mission = NodePath("../CanvasLayer/mission")
 
 [node name="GPUParticles2D" type="GPUParticles2D" parent="Player" unique_id=355587933]
 position = Vector2(0, 164)
@@ -766,6 +953,7 @@ sync_to_physics = false
 script = ExtResource("4_e2blk")
 mass = 500000.0
 radius = 7130.0
+planet_name = "Vahz"
 orbit_color_start = Color(0, 0.6560521, 0.656052, 1)
 orbit_color_middle = Color(0, 0.4652905, 0.46529055, 1)
 orbit_color_end = Color(6.7383053e-06, 0.683956, 0.55568755, 0)
@@ -793,9 +981,10 @@ sync_to_physics = false
 script = ExtResource("4_e2blk")
 mass = 30000.0
 radius = 5000.0
-orbit_color_start = Color(0.7037939, 0.6936786, 7.70092e-07, 1)
-orbit_color_middle = Color(0.92064446, 0.9134088, 1.540184e-06, 1)
-orbit_color_end = Color(0.9141812, 0.9159259, 0, 0)
+planet_name = "Cecilium"
+orbit_color_start = Color(0.57700837, 0.5770084, 0.57700837, 1)
+orbit_color_middle = Color(0.57, 0.57, 0.57, 1)
+orbit_color_end = Color(0.52, 0.52, 0.52, 0)
 collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Planet1")
 default_soi_line_width = 8.0
@@ -805,6 +994,55 @@ rotation_speed = 0.0
 position = Vector2(1, 0)
 shape = SubResource("CircleShape2D_u640v")
 
+[node name="Planet3" type="AnimatableBody2D" parent="." unique_id=195160041 node_paths=PackedStringArray("collision_shape", "satellite_of")]
+material = SubResource("ShaderMaterial_5q646")
+position = Vector2(-48937, -21371)
+physics_material_override = SubResource("PhysicsMaterial_ncg7h")
+sync_to_physics = false
+script = ExtResource("4_e2blk")
+mass = 100000.0
+radius = 14000.0
+planet_name = "Serena"
+orbit_color_start = Color(0.66, 0.38500005, 0, 1)
+orbit_color_middle = Color(0.9745093, 0.5296456, 0, 1)
+orbit_color_end = Color(0.92, 0.36800003, 0, 0)
+collision_shape = NodePath("CollisionShape2D")
+satellite_of = NodePath("../Sun")
+default_soi_line_width = 8.0
+rotation_speed = 0.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Planet3" unique_id=451640457]
+position = Vector2(1, 0)
+shape = SubResource("CircleShape2D_7yncb")
+
+[node name="ratmosphere" type="Sprite2D" parent="Planet3" unique_id=25822166]
+z_index = -5
+material = SubResource("ShaderMaterial_wi8h0")
+position = Vector2(58.00049, -9.000244)
+scale = Vector2(128.60382, 128.60382)
+texture = ExtResource("11_2cpxq")
+
+[node name="CheesePlanet" type="AnimatableBody2D" parent="." unique_id=1249870895 node_paths=PackedStringArray("collision_shape", "satellite_of")]
+material = SubResource("ShaderMaterial_7yncb")
+position = Vector2(102362, -107006)
+physics_material_override = SubResource("PhysicsMaterial_wi8h0")
+sync_to_physics = false
+script = ExtResource("4_e2blk")
+mass = 40000.0
+radius = 4000.0
+planet_name = "Lua de Queijo?"
+orbit_color_start = Color(0.7375, 0.75, 0, 1)
+orbit_color_middle = Color(1, 0.9333334, 0, 1)
+orbit_color_end = Color(0.5852302, 0.5944461, 0.06265381, 0)
+collision_shape = NodePath("CollisionShape2D")
+satellite_of = NodePath("../Sun")
+default_soi_line_width = 8.0
+rotation_speed = 0.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CheesePlanet" unique_id=1867226307]
+position = Vector2(1, 0)
+shape = SubResource("CircleShape2D_dmmwq")
+
 [node name="Sun" type="AnimatableBody2D" parent="." unique_id=1898023005 node_paths=PackedStringArray("collision_shape")]
 material = SubResource("ShaderMaterial_h0rt2")
 position = Vector2(114583, -68041)
@@ -813,6 +1051,7 @@ sync_to_physics = false
 script = ExtResource("4_e2blk")
 mass = 10000000.0
 radius = 20000.0
+planet_name = "Aragorn"
 orbit_color_start = Color(0.25761336, 0.09396597, 0.5922075, 1)
 orbit_color_middle = Color(0.38431373, 0.1764706, 0.84313726, 1)
 orbit_color_end = Color(0.38431373, 0.1764706, 0.84313726, 0)
@@ -840,6 +1079,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(1.2068455, 2.4848485)
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=738944641]
 
@@ -854,38 +1094,117 @@ label_settings = SubResource("LabelSettings_wi8h0")
 horizontal_alignment = 1
 
 [node name="velocity" type="Label" parent="CanvasLayer" unique_id=454583733]
-offset_left = 391.0
-offset_top = 589.0
-offset_right = 736.0
-offset_bottom = 662.0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -172.0
+offset_top = -61.0
+offset_right = 173.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 0
 text = "Velocidade
 "
 label_settings = SubResource("LabelSettings_h0rt2")
 horizontal_alignment = 1
 
 [node name="height" type="Label" parent="CanvasLayer" unique_id=1233960108]
-offset_left = 800.0
-offset_top = 588.0
-offset_right = 1145.0
-offset_bottom = 661.0
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -349.0
+offset_top = -60.0
+offset_right = -4.0
+offset_bottom = 13.0
+grow_horizontal = 0
+grow_vertical = 0
 text = "Altura"
 label_settings = SubResource("LabelSettings_h0rt2")
 horizontal_alignment = 1
 
 [node name="fuel" type="Label" parent="CanvasLayer" unique_id=706992205]
-offset_top = 589.0
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -60.0
 offset_right = 345.0
-offset_bottom = 662.0
+offset_bottom = 13.0
+grow_vertical = 0
 text = "Gasolina"
 label_settings = SubResource("LabelSettings_h0rt2")
 horizontal_alignment = 1
 
 [node name="planet_name" type="Label" parent="CanvasLayer" unique_id=143132541]
-offset_left = 397.0
-offset_top = 4.0
-offset_right = 742.0
-offset_bottom = 97.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -172.5
+offset_right = 172.5
+offset_bottom = 93.0
+grow_horizontal = 2
 text = "planeta
 "
 label_settings = SubResource("LabelSettings_h0rt2")
 horizontal_alignment = 1
+
+[node name="cheese_image" type="TextureRect" parent="CanvasLayer" unique_id=1934848846]
+texture_filter = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -188.0
+offset_top = 7.0
+offset_right = -118.0
+offset_bottom = 82.44444
+grow_horizontal = 0
+texture = SubResource("AtlasTexture_dmmwq")
+
+[node name="cheese" type="Label" parent="CanvasLayer" unique_id=734801975]
+texture_filter = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -107.0
+offset_top = 11.0
+offset_right = -7.0
+offset_bottom = 73.0
+grow_horizontal = 0
+text = "00"
+label_settings = SubResource("LabelSettings_qn2io")
+
+[node name="mission" type="Label" parent="CanvasLayer" unique_id=2135197699]
+custom_maximum_size = Vector2(6000, 300)
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -343.0
+offset_top = -67.0
+offset_right = 2.0
+offset_bottom = 6.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "missão"
+label_settings = SubResource("LabelSettings_dex8p")
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Robot" parent="." unique_id=1419095572 instance=ExtResource("15_3ukee")]
+position = Vector2(-105856, 128063)
+
+[node name="Area2D" type="Area2D" parent="Robot" unique_id=554786305 node_paths=PackedStringArray("dialog_box")]
+script = ExtResource("16_7yncb")
+dialog_box = NodePath("../../CanvasLayer2")
+npc_image = ExtResource("17_dmmwq")
+start_dialog_node = SubResource("Resource_dmmwq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Robot/Area2D" unique_id=1201787116]
+position = Vector2(1, -2.5)
+shape = SubResource("RectangleShape2D_qn2io")
+
+[node name="CanvasLayer2" parent="." unique_id=60803770 instance=ExtResource("17_wi8h0")]

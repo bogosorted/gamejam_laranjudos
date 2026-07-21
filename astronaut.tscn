@@ -2,6 +2,9 @@
 
 [ext_resource type="Texture2D" uid="uid://rl6n5psbe1gp" path="res://images/Sprite_rato_tileset.png" id="1_gtphq"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qn2io"]
+size = Vector2(50, 65)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_l76db"]
 atlas = ExtResource("1_gtphq")
 region = Rect2(0, 0, 64, 64)
@@ -71,7 +74,11 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Astronaut" type="Node2D" unique_id=1155113419]
+[node name="Astronaut" type="CharacterBody2D" unique_id=257215062]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=391897981]
+position = Vector2(-1, -0.5)
+shape = SubResource("RectangleShape2D_qn2io")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=513240170]
 texture_filter = 1

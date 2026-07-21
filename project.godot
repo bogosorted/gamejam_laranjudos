@@ -8,6 +8,10 @@
 
 config_version=5
 
+[autoload]
+
+Global="*res://scripts/global.gd"
+
 [application]
 
 config/name="gamejam_laranjudos"

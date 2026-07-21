@@ -1,0 +1,118 @@
+[gd_scene format=3 uid="uid://dr1c05vo260yl"]
+
+[ext_resource type="Texture2D" uid="uid://dywol55p1umh0" path="res://images/Sprite_caixa_dialogo.png" id="1_7voku"]
+[ext_resource type="Script" uid="uid://bj8m7sbau6u57" path="res://scripts/dialog_box.gd" id="1_w7j6r"]
+[ext_resource type="FontFile" uid="uid://bxllqh3rjm8as" path="res://fonts/Silkscreen-Regular.ttf" id="2_5wlj5"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7t3n2"]
+line_spacing = 0.0
+font_size = 35
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5wlj5"]
+line_spacing = 0.0
+font_size = 30
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_w7j6r"]
+line_spacing = 0.0
+font_size = 30
+outline_size = 3
+outline_color = Color(0, 0, 0, 1)
+
+[node name="CanvasLayer" type="CanvasLayer" unique_id=60803770 node_paths=PackedStringArray("text_label", "portrait", "option_1", "option_2")]
+script = ExtResource("1_w7j6r")
+text_label = NodePath("Label")
+portrait = NodePath("TextureRect")
+option_1 = NodePath("Label2")
+option_2 = NodePath("Label3")
+
+[node name="bg" type="TextureRect" parent="." unique_id=745558997]
+texture_filter = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -290.0
+offset_top = 6.0
+offset_right = -94.08667
+offset_bottom = 89.03612
+grow_horizontal = 2
+scale = Vector2(2.8662229, 2.8662229)
+texture = ExtResource("1_7voku")
+
+[node name="TextureRect" type="TextureRect" parent="." unique_id=343442573]
+texture_filter = 1
+custom_maximum_size = Vector2(100, -1)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -270.0
+offset_top = 25.999996
+offset_right = -175.0481
+offset_bottom = 118.548065
+grow_horizontal = 2
+scale = Vector2(0.832, 0.832)
+size_flags_horizontal = 4
+
+[node name="Label" type="Label" parent="." unique_id=374801403]
+custom_maximum_size = Vector2(400, 1200)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -133.0
+offset_top = 27.0
+offset_right = 267.0
+offset_bottom = 242.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_5wlj5")
+theme_override_font_sizes/font_size = 32
+text = "Oi tudo bem com voce? asdasasda
+asdasdasdsada
+"
+label_settings = SubResource("LabelSettings_7t3n2")
+autowrap_mode = 2
+justification_flags = 131
+clip_text = true
+
+[node name="Label2" type="Label" parent="." unique_id=558309115]
+custom_maximum_size = Vector2(700, 300)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -269.0
+offset_top = 137.0
+offset_right = 30.0
+offset_bottom = 241.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_5wlj5")
+theme_override_font_sizes/font_size = 32
+text = "> opção 1
+"
+label_settings = SubResource("LabelSettings_5wlj5")
+autowrap_mode = 2
+justification_flags = 131
+clip_text = true
+
+[node name="Label3" type="Label" parent="." unique_id=1207128923]
+custom_maximum_size = Vector2(300, 600)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -269.0
+offset_top = 181.0
+offset_right = -66.0
+offset_bottom = 259.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+theme_override_fonts/font = ExtResource("2_5wlj5")
+theme_override_font_sizes/font_size = 32
+text = "> opção 12
+"
+label_settings = SubResource("LabelSettings_w7j6r")
+autowrap_mode = 2
+justification_flags = 131
+clip_text = true
