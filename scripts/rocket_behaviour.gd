@@ -7,6 +7,9 @@ extends RigidBody2D
 @export var particle_2D: GPUParticles2D
 @export var sprite_2D_engine: Sprite2D
 @export var gravity_resolver: Node
+@onready var enter_sound = $EnterSound
+@onready var engine_sound = $EngineSound
+@onready var walk_sound = $WalkSound
 
 @export var label_enter: Label
 
@@ -53,6 +56,7 @@ func _physics_process(delta: float) -> void:
 		if player_inside:
 			if is_landed:
 				player_inside = false
+				enter_sound.play()
 				astronaut = preload("res://astronaut.tscn").instantiate()
 				get_parent().add_child(astronaut)
 				var closest_planet = gravity_resolver.planet_with_gravity_influence
@@ -64,6 +68,7 @@ func _physics_process(delta: float) -> void:
 		elif not player_inside and astronaut:
 			if astronaut.global_position.distance_to(global_position) < 200.0:
 				player_inside = true
+				enter_sound.play()
 				print("bora")
 				
 				var cam = get_viewport().get_camera_2d()
@@ -88,6 +93,8 @@ func _physics_process(delta: float) -> void:
 		if walk_dir != 0:
 			if anim_sprite.animation != "walking" or not anim_sprite.is_playing():
 				anim_sprite.play("walking")
+				if not walk_sound.playing:
+					walk_sound.play()
 			anim_sprite.flip_h = (walk_dir < 0)
 		else:
 			if anim_sprite.animation != "idle" or not anim_sprite.is_playing():
@@ -107,6 +114,9 @@ func _physics_process(delta: float) -> void:
 		constant_torque = -angular_velocity * sas_strength * 1000.0
 
 	if Input.is_action_pressed("move_up"):
+		if not engine_sound.playing:
+			engine_sound.play()
+		
 		particle_2D.emitting = true
 		var forward_direction = Vector2.UP.rotated(rotation)
 		var engine_position = Vector2(0, engine_offset_y).rotated(rotation)
@@ -115,6 +125,9 @@ func _physics_process(delta: float) -> void:
 		sprite_2D_engine.material.set_shader_parameter("intensity", motor_heat)
 	else:
 		particle_2D.emitting = false
+		if engine_sound.playing:
+			engine_sound.stop()
+		
 		motor_heat = clamp(motor_heat - delta *3, 0.0, 1.0)
 		sprite_2D_engine.material.set_shader_parameter("intensity", motor_heat)
 	calculate_is_landed()
