@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://76ht0b62g5j5" path="res://scripts/time_behaviour.gd" id="1_d0y5q"]
 [ext_resource type="Script" uid="uid://c2qky82j5xoy6" path="res://scripts/gravity_resolver.gd" id="1_tcg2k"]
+[ext_resource type="Script" uid="uid://csm08lwaefy7w" path="res://universe.gd" id="1_wi8h0"]
 [ext_resource type="Script" uid="uid://dpfiyomnbouoo" path="res://scripts/camera_behaviour.gd" id="2_e2blk"]
 [ext_resource type="Script" uid="uid://ddu2crwxb7a2r" path="res://scripts/orbit_predictor.gd" id="3_ncg7h"]
 [ext_resource type="Script" uid="uid://d536r8sy4hh0" path="res://scripts/rocket_behaviour.gd" id="3_wp8oq"]
@@ -9,11 +10,15 @@
 [ext_resource type="Texture2D" uid="uid://w68gninr223t" path="res://images/Sprite_robo_tileset.png" id="6_ncg7h"]
 [ext_resource type="Texture2D" uid="uid://sa2q67mso4g7" path="res://images/New Piskel (32).png" id="6_u640v"]
 [ext_resource type="Shader" uid="uid://d11u6nlyrl261" path="res://scripts/shaders/fire_engine.gdshader" id="8_u640v"]
+[ext_resource type="AudioStream" uid="uid://dol5k8yklnqwq" path="res://audios/Blip1.wav" id="9_5q646"]
 [ext_resource type="Shader" uid="uid://cfxcxl524qwpx" path="res://scripts/shaders/planet_shader.gdshader" id="9_sraih"]
+[ext_resource type="AudioStream" uid="uid://djydw6quu2jvw" path="res://audios/small_cartoon_rocket_#3-1784588516538.wav" id="10_7yncb"]
 [ext_resource type="Texture2D" uid="uid://l12w62qctj2d" path="res://images/circle-512.png" id="11_2cpxq"]
 [ext_resource type="Shader" uid="uid://drwqlsxs2c6pa" path="res://scripts/shaders/sky.gdshader" id="11_asrgw"]
 [ext_resource type="Shader" uid="uid://uvnq216v1l52" path="res://scripts/shaders/atmosphere.gdshader" id="11_h0rt2"]
+[ext_resource type="AudioStream" uid="uid://cpv4om64oehj7" path="res://audios/Hit1(1).wav" id="12_dmmwq"]
 [ext_resource type="FontFile" uid="uid://s3jgkf3dhvno" path="res://fonts/Silkscreen-Bold.ttf" id="14_r5888"]
+[ext_resource type="AudioStream" uid="uid://bhntu4d476dem" path="res://audios/Musiquinha_gamejam.wav" id="18_dmmwq"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u640v"]
 friction = 2.65
@@ -587,6 +592,7 @@ outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
 [node name="Universe" type="Node2D" unique_id=134936649]
+script = ExtResource("1_wi8h0")
 
 [node name="GAME_MANAGER" type="Node" parent="." unique_id=281771506]
 
@@ -758,6 +764,16 @@ rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_wp8oq")
 one_way_collision_margin = 0.0
 
+[node name="EnterSound" type="AudioStreamPlayer2D" parent="Player" unique_id=856688789]
+stream = ExtResource("9_5q646")
+
+[node name="EngineSound" type="AudioStreamPlayer2D" parent="Player" unique_id=191293392]
+stream = ExtResource("10_7yncb")
+volume_db = -30.0
+
+[node name="WalkSound" type="AudioStreamPlayer2D" parent="Player" unique_id=1652636954]
+stream = ExtResource("12_dmmwq")
+
 [node name="Planet1" type="AnimatableBody2D" parent="." unique_id=1043781028 node_paths=PackedStringArray("collision_shape", "satellite_of")]
 material = SubResource("ShaderMaterial_sraih")
 position = Vector2(-105796, 135228)
@@ -889,3 +905,8 @@ text = "planeta
 "
 label_settings = SubResource("LabelSettings_h0rt2")
 horizontal_alignment = 1
+
+[node name="Music" type="AudioStreamPlayer" parent="." unique_id=1507956211]
+stream = ExtResource("18_dmmwq")
+volume_db = -35.0
+autoplay = true
