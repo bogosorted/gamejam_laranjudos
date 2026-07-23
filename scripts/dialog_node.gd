@@ -17,6 +17,7 @@ class_name DialogNode
 @export_enum("none", "reach_planet", "orbit", "altitude") var action_give_mission_type: String = "none"
 @export var action_give_mission_target: String = ""
 @export var action_give_mission_value: float = 0.0
+@export var is_auto_complete_mission: bool = false
 
 @export_category("Action: Complete Mission")
 @export var action_complete_mission_and_reward: bool = false

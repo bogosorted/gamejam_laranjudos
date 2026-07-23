@@ -15,6 +15,7 @@ extends StaticBody2D
 @export var orbit_color_start: Color = Color.AQUA
 @export var orbit_color_middle: Color = Color.AQUA
 @export var orbit_color_end: Color = Color.AQUA
+@export var is_sun: bool = false
 
 @export var collision_shape: CollisionShape2D
 @export var satellite_of: Node2D

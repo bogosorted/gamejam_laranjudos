@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://ddu2crwxb7a2r" path="res://scripts/orbit_predictor.gd" id="3_ncg7h"]
 [ext_resource type="Script" uid="uid://d536r8sy4hh0" path="res://scripts/rocket_behaviour.gd" id="3_wp8oq"]
 [ext_resource type="Script" uid="uid://db40tkr22xitd" path="res://scripts/planet_behaviour.gd" id="4_e2blk"]
+[ext_resource type="Script" uid="uid://da8ede171ik2q" path="res://scripts/audio_manager.gd" id="4_ol05s"]
 [ext_resource type="Texture2D" uid="uid://w68gninr223t" path="res://images/Sprite_robo_tileset.png" id="6_ncg7h"]
 [ext_resource type="Texture2D" uid="uid://sa2q67mso4g7" path="res://images/New Piskel (32).png" id="6_u640v"]
 [ext_resource type="Shader" uid="uid://d11u6nlyrl261" path="res://scripts/shaders/fire_engine.gdshader" id="8_u640v"]
@@ -17,9 +18,17 @@
 [ext_resource type="PackedScene" uid="uid://3vc0iyrvfo6j" path="res://robot.tscn" id="15_3ukee"]
 [ext_resource type="Texture2D" uid="uid://rl6n5psbe1gp" path="res://images/Sprite_rato_tileset.png" id="15_dmmwq"]
 [ext_resource type="Script" uid="uid://01n300fvag1k" path="res://scripts/npc_interaction.gd" id="16_7yncb"]
+[ext_resource type="Script" uid="uid://bydtjxtkl3ao1" path="res://scripts/shop_interaction.gd" id="16_hjv2q"]
 [ext_resource type="Texture2D" uid="uid://co3d18c0lai0x" path="res://images/robot_head.png" id="17_dmmwq"]
 [ext_resource type="PackedScene" uid="uid://dr1c05vo260yl" path="res://dialog.tscn" id="17_wi8h0"]
+[ext_resource type="Texture2D" uid="uid://i8meyb224juh" path="res://images/Sprite_lojinha2.png" id="18_427ag"]
 [ext_resource type="Script" uid="uid://3ueeepb0sn7e" path="res://scripts/dialog_node.gd" id="19_dex8p"]
+[ext_resource type="Script" uid="uid://ckx6nlaqfe25c" path="res://scripts/mission_pointer.gd" id="23_427ag"]
+[ext_resource type="Texture2D" uid="uid://kh1t68yvhxir" path="res://images/New Piskel (30).png" id="24_dmaoi"]
+[ext_resource type="Texture2D" uid="uid://saeef25gbgx1" path="res://images/Sprite_lojinha1.png" id="25_uj0ti"]
+[ext_resource type="Texture2D" uid="uid://b4d8vy8cr52tb" path="res://images/Sprite_lojinha3.png" id="26_cslxk"]
+[ext_resource type="Texture2D" uid="uid://e2rb7eocehlv" path="res://images/Sprite_rato_antigo1.png" id="27_eg76m"]
+[ext_resource type="FontFile" uid="uid://bxllqh3rjm8as" path="res://fonts/Silkscreen-Regular.ttf" id="28_s2pfx"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_u640v"]
 friction = 2.65
@@ -731,10 +740,33 @@ font_size = 20
 outline_size = 4
 outline_color = Color(0, 0, 0, 1)
 
-[sub_resource type="Resource" id="Resource_ppy6p"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wy5j1"]
+size = Vector2(89.09375, 72.734375)
+
+[sub_resource type="Resource" id="Resource_e1o6s"]
 script = ExtResource("19_dex8p")
-lines = Array[String]([": Dentro da Nave o W serve para acelerar. ", "Lembre-se você pode apertar R para reiniciar!"])
-option_1 = "Vou em busca do meu objetivo!"
+lines = Array[String](["Vamos amigo, vá para lua de Vahz!"])
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_uj0ti"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Parabens! Agora vá para loja a direita e compre", "mais capacidade de combustivel.", "e vá para lua de Vahz!"])
+action_complete_mission_and_reward = true
+is_one_time_mission = true
+reward_variable = "cheeses"
+reward_amount = 1
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_dhs4y"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Entre na nave, Aperte W e Suba 700 metros!"])
+option_1 = "Ok"
+option_2 = "To com medo"
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_cslxk"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Sua primeira missão é subir para o espaço", "e descer em segurança, claro.", "boa sorte!"])
 action_give_mission_type = "altitude"
 action_give_mission_target = "Vahz"
 action_give_mission_value = 700.0
@@ -743,29 +775,127 @@ reward_variable = "cheeses"
 reward_amount = 1
 metadata/_custom_type_script = "uid://3ueeepb0sn7e"
 
-[sub_resource type="Resource" id="Resource_dex8p"]
+[sub_resource type="Resource" id="Resource_ol05s"]
 script = ExtResource("19_dex8p")
-lines = Array[String]([" Muito bem! Ao chegar lá, pressione E para interagir", "e iniciar sua primeira missão: subir 700 metros."])
-option_1 = "Certo!"
-next_node_1 = SubResource("Resource_ppy6p")
+lines = Array[String](["Devido aos baixos fundos da missão", "a nave tem pouca gasolina, para comprar mais", "vá a direita a loja com 1 queijo e aumente o galão", "ao terminar cada missão voce ganha 1 queijo"])
+option_1 = "top!"
+next_node_1 = SubResource("Resource_cslxk")
 metadata/_custom_type_script = "uid://3ueeepb0sn7e"
 
-[sub_resource type="Resource" id="Resource_hjv2q"]
+[sub_resource type="Resource" id="Resource_eg76m"]
 script = ExtResource("19_dex8p")
-lines = Array[String](["Ótimo! Para começar sua primeira missão", " vá até a sua nave, que está à esquerda. Use A e D para se movimentar."])
-option_1 = "Ok"
-next_node_1 = SubResource("Resource_dex8p")
+lines = Array[String](["Tutorial basico: A e D para se movimentar", "\"E\" para entrar na nave", "Scroll do mouse para mudar o zoom", "\"R\" para desvirar a nave caso tombe ela.", "Caso você tombe em outro planeta", "Apertar R vai te voltar pro planeta anterior que ", "tenha feito um pouso adequado.", "botao 1, 2, 3 e 4 Aceleram o tempo caso", "voce esteja na nave, e não estiver acelerando."])
+option_1 = "Ok!"
+next_node_1 = SubResource("Resource_ol05s")
 metadata/_custom_type_script = "uid://3ueeepb0sn7e"
 
-[sub_resource type="Resource" id="Resource_dmmwq"]
+[sub_resource type="Resource" id="Resource_s2pfx"]
 script = ExtResource("19_dex8p")
-lines = Array[String](["Robô Laranjudo: Olá! Eu\\n  sou o Laranjudo. ", "Posso te ajudar na sua missão?"])
-option_1 = "Sim"
-next_node_1 = SubResource("Resource_hjv2q")
-option_2 = "Não"
+lines = Array[String](["Bom dia senhor! Eu sou o LARANJUDO", "Fui designado a te ajudar a completar sua missão!", "CHEGAR NA LUA DE QUEIJO!"])
+option_1 = "certo"
+next_node_1 = SubResource("Resource_eg76m")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_dmaoi"]
+script = ExtResource("19_dex8p")
+is_entry_checker = true
+node_if_no_mission = SubResource("Resource_s2pfx")
+node_if_mission_incomplete = SubResource("Resource_dhs4y")
+node_if_mission_complete = SubResource("Resource_uj0ti")
+node_if_already_completed = SubResource("Resource_e1o6s")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qn2io"]
 size = Vector2(74, 77)
+
+[sub_resource type="Resource" id="Resource_8c0yt"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Parabéns, vejo que você é competente", "Então vou te compensar com um queijo."])
+action_complete_mission_and_reward = true
+is_one_time_mission = true
+reward_variable = "cheeses"
+reward_amount = 1
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_xf7s6"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Faça uma orbita estável em Cecilium por 5s"])
+option_1 = "Ok!"
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_4pv3c"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Então primeiro, faça uma orbita estável", "na nossa lua! por 5 segundos."])
+action_give_mission_type = "orbit"
+action_give_mission_target = "Cecilium"
+action_give_mission_value = 5.0
+is_one_time_mission = true
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_8q80q"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Você conseguiu! parabens!", "Mas antes do proximo destino ", "Preciso saber se você é capaz", "o planeta Serena é complicado pra jovens pilotos."])
+option_1 = "Ok"
+next_node_1 = SubResource("Resource_4pv3c")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_3425d"]
+script = ExtResource("19_dex8p")
+is_entry_checker = true
+node_if_no_mission = SubResource("Resource_8q80q")
+node_if_mission_incomplete = SubResource("Resource_xf7s6")
+node_if_mission_complete = SubResource("Resource_8c0yt")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_cud5y"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Parabens! você chegou a Serena!", "Você é um bom piloto."])
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_peumh"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Ande, vá para Serena!"])
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_8efpt"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Agora vá para Serena!", "O planeta mais proximo da lua de queijo"])
+option_1 = "Ok!"
+action_give_mission_type = "reach_planet"
+action_give_mission_target = "Serena"
+is_auto_complete_mission = true
+reward_variable = "cheeses"
+reward_amount = 1
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_eb6cr"]
+script = ExtResource("19_dex8p")
+is_entry_checker = true
+node_if_no_mission = SubResource("Resource_8efpt")
+node_if_mission_incomplete = SubResource("Resource_peumh")
+node_if_already_completed = SubResource("Resource_cud5y")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_jrhxq"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Parabens!! voce é INCRIVEL! ", "Pena que a lua nao era de queijo mesmo..."])
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_yjd05"]
+script = ExtResource("19_dex8p")
+lines = Array[String](["Você é o cara! o seu destino está logo ali.", "Mas não pense que vai ser facil!", "a lua de queijo está bem proximo ao sol.", "a gravidade do sol vai acelerar a sua nave!", "ninguem nunca antes conseguiu chegar lá!", "os que tentaram, não voltaram pra contar ", "a historia...", "enfim, boa sorte!"])
+option_1 = "eita"
+action_give_mission_type = "reach_planet"
+action_give_mission_target = "Lua de Queijo?"
+is_auto_complete_mission = true
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
+
+[sub_resource type="Resource" id="Resource_sl8jx"]
+script = ExtResource("19_dex8p")
+is_entry_checker = true
+node_if_no_mission = SubResource("Resource_yjd05")
+node_if_already_completed = SubResource("Resource_jrhxq")
+metadata/_custom_type_script = "uid://3ueeepb0sn7e"
 
 [node name="Universe" type="Node2D" unique_id=134936649]
 
@@ -792,6 +922,9 @@ step_delta = 0.009
 complete_orbit_middle = Color(0.9919984, 0.51407456, 0.118127756, 1)
 complete_orbit_color = Color(0.90396774, 0.201963, 0.19690582, 1)
 default_line_lenght = 10.0
+
+[node name="Node2D" type="Node2D" parent="GAME_MANAGER" unique_id=1479233707]
+script = ExtResource("4_ol05s")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1497961582 node_paths=PackedStringArray("player", "arrow_image", "orbit_predictor", "sky_material")]
 script = ExtResource("2_e2blk")
@@ -957,6 +1090,7 @@ planet_name = "Vahz"
 orbit_color_start = Color(0, 0.6560521, 0.656052, 1)
 orbit_color_middle = Color(0, 0.4652905, 0.46529055, 1)
 orbit_color_end = Color(6.7383053e-06, 0.683956, 0.55568755, 0)
+is_sun = null
 collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Sun")
 default_soi_line_width = 8.0
@@ -985,6 +1119,7 @@ planet_name = "Cecilium"
 orbit_color_start = Color(0.57700837, 0.5770084, 0.57700837, 1)
 orbit_color_middle = Color(0.57, 0.57, 0.57, 1)
 orbit_color_end = Color(0.52, 0.52, 0.52, 0)
+is_sun = null
 collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Planet1")
 default_soi_line_width = 8.0
@@ -1000,12 +1135,13 @@ position = Vector2(-48937, -21371)
 physics_material_override = SubResource("PhysicsMaterial_ncg7h")
 sync_to_physics = false
 script = ExtResource("4_e2blk")
-mass = 100000.0
+mass = 200000.0
 radius = 14000.0
 planet_name = "Serena"
 orbit_color_start = Color(0.66, 0.38500005, 0, 1)
 orbit_color_middle = Color(0.9745093, 0.5296456, 0, 1)
 orbit_color_end = Color(0.92, 0.36800003, 0, 0)
+is_sun = null
 collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Sun")
 default_soi_line_width = 8.0
@@ -1034,6 +1170,7 @@ planet_name = "Lua de Queijo?"
 orbit_color_start = Color(0.7375, 0.75, 0, 1)
 orbit_color_middle = Color(1, 0.9333334, 0, 1)
 orbit_color_end = Color(0.5852302, 0.5944461, 0.06265381, 0)
+is_sun = null
 collision_shape = NodePath("CollisionShape2D")
 satellite_of = NodePath("../Sun")
 default_soi_line_width = 8.0
@@ -1055,6 +1192,7 @@ planet_name = "Aragorn"
 orbit_color_start = Color(0.25761336, 0.09396597, 0.5922075, 1)
 orbit_color_middle = Color(0.38431373, 0.1764706, 0.84313726, 1)
 orbit_color_end = Color(0.38431373, 0.1764706, 0.84313726, 0)
+is_sun = true
 collision_shape = NodePath("CollisionShape2D")
 default_soi_line_width = 8.0
 
@@ -1177,16 +1315,16 @@ text = "00"
 label_settings = SubResource("LabelSettings_qn2io")
 
 [node name="mission" type="Label" parent="CanvasLayer" unique_id=2135197699]
-custom_maximum_size = Vector2(6000, 300)
+custom_maximum_size = Vector2(300, 600)
 anchors_preset = 6
 anchor_left = 1.0
 anchor_top = 0.5
 anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -343.0
+offset_left = -298.0
 offset_top = -67.0
 offset_right = 2.0
-offset_bottom = 6.0
+offset_bottom = 90.0
 grow_horizontal = 0
 grow_vertical = 2
 text = "missão"
@@ -1194,17 +1332,130 @@ label_settings = SubResource("LabelSettings_dex8p")
 horizontal_alignment = 1
 autowrap_mode = 2
 
+[node name="shopping 1" type="Area2D" parent="." unique_id=1522129971 node_paths=PackedStringArray("dialog_box")]
+position = Vector2(-105386, 128060)
+script = ExtResource("16_hjv2q")
+dialog_box = NodePath("../textbox")
+shop_image = ExtResource("18_427ag")
+text_a_offer = Array[String](["Olá! Quer trocar 1 queijo pra aumentar 15 de gasolina?"])
+text_b_success = Array[String](["Negócio fechado! Tanque aumentado."])
+text_c_failure = Array[String](["Ta liso em amigo?"])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="shopping 1" unique_id=1582521359]
+position = Vector2(-4.90625, 18.734375)
+shape = SubResource("RectangleShape2D_wy5j1")
+
+[node name="Sprite2D" type="Sprite2D" parent="shopping 1" unique_id=646352260]
+texture_filter = 1
+position = Vector2(-4.999999, 8)
+rotation = 0.04840939
+scale = Vector2(1.3387597, 1.3387597)
+texture = ExtResource("18_427ag")
+
 [node name="Robot" parent="." unique_id=1419095572 instance=ExtResource("15_3ukee")]
 position = Vector2(-105856, 128063)
 
 [node name="Area2D" type="Area2D" parent="Robot" unique_id=554786305 node_paths=PackedStringArray("dialog_box")]
 script = ExtResource("16_7yncb")
-dialog_box = NodePath("../../CanvasLayer2")
+dialog_box = NodePath("../../textbox")
 npc_image = ExtResource("17_dmmwq")
-start_dialog_node = SubResource("Resource_dmmwq")
+mission_sequence = Array[ExtResource("19_dex8p")]([SubResource("Resource_dmaoi")])
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Robot/Area2D" unique_id=1201787116]
 position = Vector2(1, -2.5)
 shape = SubResource("RectangleShape2D_qn2io")
 
-[node name="CanvasLayer2" parent="." unique_id=60803770 instance=ExtResource("17_wi8h0")]
+[node name="textbox" parent="." unique_id=60803770 instance=ExtResource("17_wi8h0")]
+
+[node name="arrow" type="CanvasLayer" parent="." unique_id=758180581]
+script = ExtResource("23_427ag")
+arrow_texture = ExtResource("24_dmaoi")
+arrow_scale = 0.3
+
+[node name="Robot2" parent="." unique_id=806218496 instance=ExtResource("15_3ukee")]
+position = Vector2(-74497, 124986.01)
+rotation = 2.1726596
+
+[node name="Area2D" type="Area2D" parent="Robot2" unique_id=444776643 node_paths=PackedStringArray("dialog_box")]
+position = Vector2(-8.249261, 5.666217)
+script = ExtResource("16_7yncb")
+dialog_box = NodePath("../../textbox")
+npc_image = ExtResource("17_dmmwq")
+mission_sequence = Array[ExtResource("19_dex8p")]([SubResource("Resource_3425d"), SubResource("Resource_eb6cr")])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Robot2/Area2D" unique_id=1646936148]
+position = Vector2(1, -2.5)
+shape = SubResource("RectangleShape2D_qn2io")
+
+[node name="shopping 2" type="Area2D" parent="." unique_id=464924682 node_paths=PackedStringArray("dialog_box")]
+position = Vector2(-74559.01, 125102.01)
+rotation = 2.123205
+script = ExtResource("16_hjv2q")
+dialog_box = NodePath("../textbox")
+shop_image = ExtResource("25_uj0ti")
+text_a_offer = Array[String](["Olá! Quer trocar 1 queijo pra aumentar 15 de gasolina?"])
+text_b_success = Array[String](["Negócio fechado! Tanque aumentado."])
+text_c_failure = Array[String](["Ta liso em amigo?"])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="shopping 2" unique_id=1216504695]
+position = Vector2(-4.90625, 18.734375)
+shape = SubResource("RectangleShape2D_wy5j1")
+
+[node name="Sprite2D" type="Sprite2D" parent="shopping 2" unique_id=1939939475]
+texture_filter = 1
+position = Vector2(-4.999999, 8)
+rotation = 0.04840939
+scale = Vector2(1.3387597, 1.3387597)
+texture = ExtResource("25_uj0ti")
+
+[node name="shopping 3" type="Area2D" parent="." unique_id=897626934 node_paths=PackedStringArray("dialog_box")]
+position = Vector2(-58708, -31466.998)
+rotation = -0.79699135
+script = ExtResource("16_hjv2q")
+dialog_box = NodePath("../textbox")
+shop_image = ExtResource("26_cslxk")
+text_a_offer = Array[String](["Olá! Quer trocar 1 queijo pra aumentar 15 de gasolina?"])
+text_b_success = Array[String](["Negócio fechado! Tanque aumentado."])
+text_c_failure = Array[String](["Ta liso em amigo?"])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="shopping 3" unique_id=1251999186]
+position = Vector2(-4.90625, 18.734375)
+shape = SubResource("RectangleShape2D_wy5j1")
+
+[node name="Sprite2D" type="Sprite2D" parent="shopping 3" unique_id=915465512]
+texture_filter = 1
+position = Vector2(-4.999999, 8)
+rotation = 0.04840939
+scale = Vector2(1.3387597, 1.3387597)
+texture = ExtResource("26_cslxk")
+
+[node name="Robot3" parent="." unique_id=434728110 instance=ExtResource("15_3ukee")]
+position = Vector2(-58550.996, -31600)
+rotation = -0.759007
+
+[node name="Area2D" type="Area2D" parent="Robot3" unique_id=2046889102 node_paths=PackedStringArray("dialog_box")]
+position = Vector2(-8.249261, 5.666217)
+script = ExtResource("16_7yncb")
+dialog_box = NodePath("../../textbox")
+npc_image = ExtResource("17_dmmwq")
+mission_sequence = Array[ExtResource("19_dex8p")]([SubResource("Resource_sl8jx")])
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Robot3/Area2D" unique_id=153771567]
+position = Vector2(1, -2.5)
+shape = SubResource("RectangleShape2D_qn2io")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=129255221]
+texture_filter = 1
+position = Vector2(102365, -111038)
+texture = ExtResource("27_eg76m")
+
+[node name="Label" type="Label" parent="Sprite2D" unique_id=1376790297]
+offset_left = 34.0
+offset_top = -104.0
+offset_right = 356.0
+offset_bottom = -11.0
+theme_override_fonts/font = ExtResource("28_s2pfx")
+text = "Amigo, a lua não era
+de queijo. Fomos iludidos
+pelos nossas vontades.
+FIM."

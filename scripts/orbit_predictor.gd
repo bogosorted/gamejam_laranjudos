@@ -87,12 +87,16 @@ func _physics_process(_delta: float) -> void:
 		point_pos += velocity * step_delta
 
 	if is_in_orbit:
+		if player and "is_in_stable_orbit" in player:
+			player.is_in_stable_orbit = true
 		var line_gradient = Gradient.new()
 		line_gradient.set_color(0, complete_orbit_color)
 		line_gradient.add_point(0.6, complete_orbit_middle)
 		line_gradient.set_color(2, complete_orbit_color)
 		gradient = line_gradient
 	else:
+		if player and "is_in_stable_orbit" in player:
+			player.is_in_stable_orbit = false
 		var line_gradient = Gradient.new()
 		var offsets = []
 		var colors = []

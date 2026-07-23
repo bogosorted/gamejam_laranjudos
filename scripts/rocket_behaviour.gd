@@ -20,14 +20,17 @@ var motor_heat : float = 0.0
 var max_fuel: float = 25.0
 var current_fuel: float = 25.0
 var is_landed: bool = false
+var is_in_stable_orbit: bool = false
 var player_inside: bool = false
 var astronaut: Node2D = null
 var current_angle: float = 0.0
 var walk_speed: float = 1.0
 var e_was_pressed: bool = false
 var last_safe_planet: Node2D = null
+var prev_velocity: float = 0.0
 
 func _ready() -> void:
+	add_to_group("rocket")
 	await get_tree().process_frame
 	
 	var closest_planet = gravity_resolver.planet_with_gravity_influence
@@ -55,24 +58,41 @@ func _physics_process(delta: float) -> void:
 			near_npc = true
 			break
 			
+	var cp = gravity_resolver.planet_with_gravity_influence
+	var current_alt = 9999.0
+	var angle_diff = 0.0
+	var current_vel = linear_velocity.length() / 100.0
+	
+	if cp:
+		var dist = global_position.distance_to(cp.global_position)
+		current_alt = max(0, ((dist - cp.radius - 47)/10) - 13.5)
+		var planet_angle = cp.global_position.angle_to_point(global_position)
+		var expected_rotation = planet_angle + (PI / 2.0)
+		angle_diff = rad_to_deg(abs(angle_difference(rotation, expected_rotation)))
+
 	if label_enter:
 		if in_dialog:
 			label_enter.visible = false
 		elif player_inside:
 			if is_landed:
-				label_enter.text = "Aperte a tecla E\npara sair"
+				label_enter.text = "E: Sair da Nave"
+				label_enter.visible = true
+			elif cp and current_alt < 15.0 and angle_diff > 45.0 and current_vel < 5.0:
+				label_enter.text = "R: Desvirar Nave"
 				label_enter.visible = true
 			else:
 				label_enter.visible = false
 		elif near_npc:
 			label_enter.text = "Aperte Z\npara conversar"
 			label_enter.visible = true
-		elif astronaut:
-			if astronaut.global_position.distance_to(global_position) < 200.0:
-				label_enter.text = "Aperte a tecla E\npara entrar"
-				label_enter.visible = true
+		elif astronaut and astronaut.global_position.distance_to(global_position) < 200.0:
+			if cp and current_alt < 15.0 and angle_diff > 45.0 and current_vel < 5.0:
+				label_enter.text = "E: Entrar | R: Desvirar"
 			else:
-				label_enter.visible = false
+				label_enter.text = "Aperte a tecla E\npara entrar"
+			label_enter.visible = true
+		else:
+			label_enter.visible = false
 
 	if player_inside:
 		if label_velocity: label_velocity.visible = true
@@ -109,7 +129,10 @@ func _physics_process(delta: float) -> void:
 				if Global.active_mission_type == "reach_planet":
 					label_mission.text = "Pouse em " + Global.active_mission_target
 				elif Global.active_mission_type == "orbit":
-					label_mission.text = "Orbite " + Global.active_mission_target
+					if Global.active_mission_value > 0:
+						label_mission.text = "Órbita em " + Global.active_mission_target + ": " + str(int(ceil(Global.active_mission_value))) + "s"
+					else:
+						label_mission.text = "Orbite " + Global.active_mission_target
 				elif Global.active_mission_type == "altitude":
 					label_mission.text = "Alcance " + str(Global.active_mission_value) + "m de altitude"
 
@@ -140,27 +163,20 @@ func _physics_process(delta: float) -> void:
 				astronaut = null
 	e_was_pressed = e_is_pressed
 	
-	if Input.is_physical_key_pressed(KEY_R):
-		var target_planet = last_safe_planet
-		if not target_planet:
-			target_planet = gravity_resolver.planet_with_gravity_influence
+	if Input.is_physical_key_pressed(KEY_R) and current_alt < 15.0 and angle_diff > 45.0 and current_vel < 5.0:
+		reset_ship()
+		return
 		
-		if target_planet:
-			linear_velocity = Vector2.ZERO
-			angular_velocity = 0.0
-			motor_heat = 0.0
-			current_fuel = max_fuel
+	if cp:
+		if "is_sun" in cp and cp.is_sun and current_alt < 400.0:
+			reset_ship()
+			return
+		
+		if current_alt <= 25.0 and current_vel >= 70.0:
+			reset_ship()
+			return
 			
-			if not player_inside and astronaut:
-				astronaut.queue_free()
-				astronaut = null
-				player_inside = true
-				var cam = get_viewport().get_camera_2d()
-				if cam: cam.player = self
-				
-			var spawn_distance = target_planet.radius + 190.0
-			global_position = target_planet.global_position + Vector2(0, -spawn_distance)
-			rotation = 0.0
+	prev_velocity = current_vel
 
 	if not player_inside and astronaut:
 		constant_torque = 0.0
@@ -198,6 +214,10 @@ func _physics_process(delta: float) -> void:
 		constant_torque = -angular_velocity * sas_strength * 1000.0
 
 	if Input.is_action_pressed("move_up") and current_fuel > 0.0:
+		var audio = get_tree().get_first_node_in_group("audio_manager")
+		if audio:
+			audio.play_engine(true)
+			
 		current_fuel = max(0.0, current_fuel - delta * 20.0)
 		particle_2D.emitting = true
 		var forward_direction = Vector2.UP.rotated(rotation)
@@ -206,27 +226,53 @@ func _physics_process(delta: float) -> void:
 		motor_heat = clamp(motor_heat + delta *3, 0.0, 1.0)
 		sprite_2D_engine.material.set_shader_parameter("intensity", motor_heat)
 	else:
+		var audio = get_tree().get_first_node_in_group("audio_manager")
+		if audio:
+			audio.play_engine(false)
+			
 		particle_2D.emitting = false
 		motor_heat = clamp(motor_heat - delta *3, 0.0, 1.0)
 		sprite_2D_engine.material.set_shader_parameter("intensity", motor_heat)
+		
+	if is_landed and current_fuel < max_fuel:
+		current_fuel = min(current_fuel + 200.0 * delta, max_fuel)
 	calculate_is_landed()
 	
 	if Global.active_mission_type != "" and not Global.active_mission_completed:
-		var cp = gravity_resolver.planet_with_gravity_influence
+		cp = gravity_resolver.planet_with_gravity_influence
+		var just_completed = false
 		if cp:
 			if Global.active_mission_type == "reach_planet" and cp.planet_name == Global.active_mission_target:
 				if is_landed:
-					Global.active_mission_completed = true
+					just_completed = true
 			elif Global.active_mission_type == "orbit" and cp.planet_name == Global.active_mission_target:
-				var dist = global_position.distance_to(cp.global_position)
-				var alt = (dist - cp.radius - 47)/10
-				if alt > 50 and alt < 500 and linear_velocity.length() > 200:
-					Global.active_mission_completed = true
+				if is_in_stable_orbit:
+					Global.active_mission_value -= delta * 16.0
+					if Global.active_mission_value <= 0:
+						just_completed = true
 			elif Global.active_mission_type == "altitude":
 				var dist = global_position.distance_to(cp.global_position)
 				var alt = max(0, ((dist - cp.radius - 47)/10) - 13.5)
 				if alt >= Global.active_mission_value:
-					Global.active_mission_completed = true
+					just_completed = true
+					
+		if just_completed:
+			if Global.active_mission_auto_complete:
+				# Auto turn-in
+				var current_val = Global.get(Global.active_mission_reward_variable)
+				if current_val != null:
+					Global.set(Global.active_mission_reward_variable, current_val + Global.active_mission_reward_amount)
+				Global.active_mission_type = ""
+				Global.active_mission_target = ""
+				Global.active_mission_completed = false
+				
+				if is_instance_valid(Global.last_mission_npc):
+					Global.last_mission_npc.current_mission_index += 1
+					if Global.last_mission_npc.current_mission_index >= Global.last_mission_npc.mission_sequence.size():
+						Global.last_mission_npc.mission_permanently_completed = true
+				Global.last_mission_npc = null
+			else:
+				Global.active_mission_completed = true
 	
 func calculate_is_landed() -> void:
 	var closest_planet = gravity_resolver.planet_with_gravity_influence
@@ -248,3 +294,34 @@ func calculate_is_landed() -> void:
 		is_landed = true
 	else:
 		is_landed = false
+
+func reset_ship() -> void:
+	prev_velocity = 0.0
+	
+	var target_planet = last_safe_planet
+	if not target_planet:
+		target_planet = gravity_resolver.planet_with_gravity_influence
+	
+	if target_planet and "is_sun" in target_planet and target_planet.is_sun:
+		var planets = get_tree().get_nodes_in_group("planet")
+		for p in planets:
+			if not ("is_sun" in p and p.is_sun):
+				target_planet = p
+				break
+	
+	if target_planet:
+		linear_velocity = Vector2.ZERO
+		angular_velocity = 0.0
+		motor_heat = 0.0
+		current_fuel = max_fuel
+		
+		if not player_inside and astronaut:
+			astronaut.queue_free()
+			astronaut = null
+			player_inside = true
+			var cam = get_viewport().get_camera_2d()
+			if cam: cam.player = self
+			
+		var spawn_distance = target_planet.radius + 190.0
+		global_position = target_planet.global_position + Vector2(0, -spawn_distance)
+		rotation = 0.0

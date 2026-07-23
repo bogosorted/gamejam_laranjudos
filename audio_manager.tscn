@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://x01ynqbhqucb"]
+
+[ext_resource type="Script" uid="uid://da8ede171ik2q" path="res://scripts/audio_manager.gd" id="1_audio"]
+[ext_resource type="AudioStream" uid="uid://denfbwcmvqj0v" path="res://musics/Musiquinha_gamejam.wav" id="2_6jj5d"]
+[ext_resource type="AudioStream" uid="uid://brlxl46fyn1hd" path="res://musics/rocket.wav" id="3_5olve"]
+
+[node name="AudioManager" type="Node" unique_id=1896620816]
+script = ExtResource("1_audio")
+background_music = ExtResource("2_6jj5d")
+bgm_volume = -27.336
+engine_sound = ExtResource("3_5olve")
+engine_volume = -29.607999999999997

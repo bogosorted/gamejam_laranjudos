@@ -7,19 +7,19 @@
 [sub_resource type="LabelSettings" id="LabelSettings_7t3n2"]
 line_spacing = 0.0
 font_size = 35
-outline_size = 3
+outline_size = 7
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_5wlj5"]
 line_spacing = 0.0
 font_size = 30
-outline_size = 3
+outline_size = 7
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_w7j6r"]
 line_spacing = 0.0
 font_size = 30
-outline_size = 3
+outline_size = 7
 outline_color = Color(0, 0, 0, 1)
 
 [node name="CanvasLayer" type="CanvasLayer" unique_id=60803770 node_paths=PackedStringArray("text_label", "portrait", "option_1", "option_2")]
